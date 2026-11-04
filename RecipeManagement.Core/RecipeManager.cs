@@ -10,26 +10,61 @@ namespace RecipeManagement.Core;
 /// </summary>
 public sealed class RecipeManager : IRecipeManager
 {
-    // TODO Part A: add your private collection fields here.
-
+    private readonly Dictionary<int,Recipe> _byId;
+    private readonly List<string> _toBuy;
+    private readonly LinkedList<int> _plan;
+    private readonly Stack<int> _lastRemoved;
+    private readonly Queue<string> _steps;
     public RecipeManager(IEnumerable<Recipe> recipes)
     {
-        // TODO Part A: validate recipes and build Dictionary<int, Recipe>.
-        _ = recipes;
+        if (recipes is null)
+        {
+            throw new ArgumentNullException(nameof(recipes));
+        }
+        _byId = new Dictionary<int, Recipe>();
+        _toBuy = new List<string>();
+        _plan = new LinkedList<int>();
+        _lastRemoved = new Stack<int>();
+        _steps = new Queue<string>();
+        foreach (Recipe recipe in recipes)
+        {
+            if (recipe is null)
+            {
+                throw new ArgumentNullException(nameof(recipe));
+            }
+            if (recipe.Id <= 0)
+            {
+                throw new ArgumentException("Please enter positive integer:" + recipe.Id);
+            }
+            if (string.IsNullOrWhiteSpace(recipe.Title))
+            {
+                throw new ArgumentException("Please enter Title:ID" + recipe.Id);
+            }
+            if (_byId.ContainsKey(recipe.Id))
+            {
+                throw new ArgumentException("Don enter same ID:" + recipe.Id);
+            }
+            _byId.Add(recipe.Id , recipe);
+        }
     }
 
-    public int RecipeCount => 0;
-    public int ShoppingItemCount => 0;
-    public int CookingPlanCount => 0;
-    public int PendingInstructionCount => 0;
-    public int RemovedRecipeCount => 0;
+    public int RecipeCount => _byId.Count;
+    public int ShoppingItemCount => _toBuy.Count;
+    public int CookingPlanCount => _plan.Count;
+    public int PendingInstructionCount => _steps.Count;
+    public int RemovedRecipeCount => _lastRemoved.Count;
 
     public bool AddRecipe(Recipe recipe) =>
         throw new NotImplementedException("Part A: implement AddRecipe.");
+    public Recipe? FindRecipe(int recipeId)
+{
+    if (_byId.TryGetValue(recipeId, out Recipe? recipe))
+    {
+        return recipe;
+    }
 
-    public Recipe? FindRecipe(int recipeId) =>
-        throw new NotImplementedException("Part A: implement FindRecipe.");
-
+    return null;
+}
     public bool RemoveRecipe(int recipeId) =>
         throw new NotImplementedException("Part A: implement RemoveRecipe.");
 
