@@ -65,8 +65,20 @@ public sealed class RecipeManager : IRecipeManager
 
         return null;
     }
-    public bool RemoveRecipe(int recipeId) =>
-        throw new NotImplementedException("Part A: implement RemoveRecipe.");
+    public bool RemoveRecipe(int recipeId)
+    {
+        if (!_byId.ContainsKey(recipeId))
+        {
+            return false;
+        }
+
+        if (_plan.Contains(recipeId))
+        {
+            return false;
+        }
+
+        return _byId.Remove(recipeId);
+    }
 
     public int AddIngredientsToShoppingList(int recipeId)
     {
@@ -120,11 +132,37 @@ public sealed class RecipeManager : IRecipeManager
         return true;
     }
 
-    public bool RestoreLastRemovedRecipe() =>
-        throw new NotImplementedException("Part A: implement RestoreLastRemovedRecipe.");
+    public bool RestoreLastRemovedRecipe()
+    {
+        if (_lastRemoved.Count == 0)
+        {
+            return false;
+        }
 
-    public int? PeekLastRemovedRecipe() =>
-        throw new NotImplementedException("Part A: implement PeekLastRemovedRecipe.");
+        int recipeId = _lastRemoved.Pop();
+        if (FindRecipe(recipeId) is null)
+        {
+            return false;
+        }
+
+        if (_plan.Contains(recipeId))
+        {
+            return false;
+        }
+
+        _plan.AddLast(recipeId);
+        return true;
+    }
+
+    public int? PeekLastRemovedRecipe()
+    {
+        if (_lastRemoved.Count == 0)
+        {
+            return null;
+        }
+
+        return _lastRemoved.Peek();
+    }
 
     public IReadOnlyList<int> GetCookingPlan()
     {
