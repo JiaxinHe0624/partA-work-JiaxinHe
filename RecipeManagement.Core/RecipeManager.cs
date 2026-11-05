@@ -169,14 +169,47 @@ public sealed class RecipeManager : IRecipeManager
         return new List<int>(_plan);
     }
 
-    public bool StartCooking(int recipeId) =>
-        throw new NotImplementedException("Part A: implement StartCooking.");
+    public bool StartCooking(int recipeId)
+    {
+        Recipe? recipe = FindRecipe(recipeId);
+        if (recipe is null)
+        {
+            return false;
+        }
 
-    public string? PeekNextInstruction() =>
-        throw new NotImplementedException("Part A: implement PeekNextInstruction.");
+        if (recipe.Instructions.Count == 0)
+        {
+            return false;
+        }
 
-    public string? CompleteNextInstruction() =>
-        throw new NotImplementedException("Part A: implement CompleteNextInstruction.");
+        _steps.Clear();
+        foreach (string instruction in recipe.Instructions)
+        {
+            _steps.Enqueue(instruction);
+        }
+
+        return true;
+    }
+
+    public string? PeekNextInstruction()
+    {
+        if (_steps.Count == 0)
+        {
+            return null;
+        }
+
+        return _steps.Peek();
+    }
+
+    public string? CompleteNextInstruction()
+    {
+        if (_steps.Count == 0)
+        {
+            return null;
+        }
+
+        return _steps.Dequeue();
+    }
 
     public IReadOnlyList<Recipe> SearchByTitle(string searchText) =>
         throw new NotImplementedException("Part B: implement SearchByTitle.");
