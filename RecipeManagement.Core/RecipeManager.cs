@@ -93,11 +93,32 @@ public sealed class RecipeManager : IRecipeManager
     {
         _toBuy.Clear();
     }
-    public bool AddRecipeToCookingPlan(int recipeId) =>
-        throw new NotImplementedException("Part A: implement AddRecipeToCookingPlan.");
+    public bool AddRecipeToCookingPlan(int recipeId)
+    {
+        if (FindRecipe(recipeId) is null)
+        {
+            return false;
+        }
 
-    public bool RemoveRecipeFromCookingPlan(int recipeId) =>
-        throw new NotImplementedException("Part A: implement RemoveRecipeFromCookingPlan.");
+        if (_plan.Contains(recipeId))
+        {
+            return false;
+        }
+
+        _plan.AddLast(recipeId);
+        return true;
+    }
+
+    public bool RemoveRecipeFromCookingPlan(int recipeId)
+    {
+        if (!_plan.Remove(recipeId))
+        {
+            return false;
+        }
+
+        _lastRemoved.Push(recipeId);
+        return true;
+    }
 
     public bool RestoreLastRemovedRecipe() =>
         throw new NotImplementedException("Part A: implement RestoreLastRemovedRecipe.");
@@ -105,8 +126,10 @@ public sealed class RecipeManager : IRecipeManager
     public int? PeekLastRemovedRecipe() =>
         throw new NotImplementedException("Part A: implement PeekLastRemovedRecipe.");
 
-    public IReadOnlyList<int> GetCookingPlan() =>
-        throw new NotImplementedException("Part A: implement GetCookingPlan.");
+    public IReadOnlyList<int> GetCookingPlan()
+    {
+        return new List<int>(_plan);
+    }
 
     public bool StartCooking(int recipeId) =>
         throw new NotImplementedException("Part A: implement StartCooking.");
