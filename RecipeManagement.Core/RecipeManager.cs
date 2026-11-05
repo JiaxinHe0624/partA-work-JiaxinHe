@@ -10,7 +10,7 @@ namespace RecipeManagement.Core;
 /// </summary>
 public sealed class RecipeManager : IRecipeManager
 {
-    private readonly Dictionary<int,Recipe> _byId;
+    private readonly Dictionary<int, Recipe> _byId;
     private readonly List<string> _toBuy;
     private readonly LinkedList<int> _plan;
     private readonly Stack<int> _lastRemoved;
@@ -44,7 +44,7 @@ public sealed class RecipeManager : IRecipeManager
             {
                 throw new ArgumentException("Don enter same ID:" + recipe.Id);
             }
-            _byId.Add(recipe.Id , recipe);
+            _byId.Add(recipe.Id, recipe);
         }
     }
 
@@ -57,26 +57,42 @@ public sealed class RecipeManager : IRecipeManager
     public bool AddRecipe(Recipe recipe) =>
         throw new NotImplementedException("Part A: implement AddRecipe.");
     public Recipe? FindRecipe(int recipeId)
-{
-    if (_byId.TryGetValue(recipeId, out Recipe? recipe))
     {
-        return recipe;
-    }
+        if (_byId.TryGetValue(recipeId, out Recipe? recipe))
+        {
+            return recipe;
+        }
 
-    return null;
-}
+        return null;
+    }
     public bool RemoveRecipe(int recipeId) =>
         throw new NotImplementedException("Part A: implement RemoveRecipe.");
 
-    public int AddIngredientsToShoppingList(int recipeId) =>
-        throw new NotImplementedException("Part A: implement AddIngredientsToShoppingList.");
+    public int AddIngredientsToShoppingList(int recipeId)
+    {
+        Recipe? recipe = FindRecipe(recipeId);
+        if (recipe is null)
+        {
+            return 0;
+        }
 
-    public IReadOnlyList<string> GetShoppingList() =>
-        throw new NotImplementedException("Part A: implement GetShoppingList.");
+        int added = 0;
+        foreach (string ingredient in recipe.Ingredients)
+        {
+            _toBuy.Add(ingredient);
+            added++;
+        }
 
-    public void ClearShoppingList() =>
-        throw new NotImplementedException("Part A: implement ClearShoppingList.");
-
+        return added;
+    }
+    public IReadOnlyList<string> GetShoppingList()
+    {
+        return new List<string>(_toBuy);
+    }
+    public void ClearShoppingList()
+    {
+        _toBuy.Clear();
+    }
     public bool AddRecipeToCookingPlan(int recipeId) =>
         throw new NotImplementedException("Part A: implement AddRecipeToCookingPlan.");
 
